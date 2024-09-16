@@ -1,0 +1,11 @@
+mode: set
+todos.com/m/v2/pkg/todo/adapters/output/in_memory_todo_repository.go:9.58,13.2 1 1
+todos.com/m/v2/pkg/todo/adapters/output/in_memory_todo_repository.go:15.78,18.2 2 0
+todos.com/m/v2/pkg/todo/adapters/output/in_memory_todo_repository.go:19.87,23.2 2 0
+todos.com/m/v2/pkg/todo/adapters/output/in_memory_todo_repository.go:24.77,27.2 2 0
+todos.com/m/v2/pkg/todo/adapters/output/in_memory_todo_repository.go:28.69,31.2 2 0
+todos.com/m/v2/pkg/todo/adapters/output/todo_web_adapter.go:12.71,14.2 1 1
+todos.com/m/v2/pkg/todo/adapters/output/todo_web_adapter.go:15.71,17.2 1 1
+todos.com/m/v2/pkg/todo/adapters/output/todo_web_adapter.go:18.81,20.2 1 1
+todos.com/m/v2/pkg/todo/adapters/output/todo_web_adapter.go:21.87,23.2 1 1
+todos.com/m/v2/pkg/todo/adapters/output/todo_web_adapter.go:24.80,26.2 1 1

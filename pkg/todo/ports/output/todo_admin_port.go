@@ -6,6 +6,6 @@ type TodoAdminPort interface {
 	AddTodo(todo domain.Todo) domain.Todo
 	RemoveTodo(todoId domain.TodoId) bool
 	UpdateTodo(updatedTodo domain.Todo) domain.Todo
-	ListTodos() []domain.Todo
+	ListTodos(todoUserId domain.TodoUserId) []domain.Todo
 	FindTodoById(todoId domain.TodoId) domain.Todo
 }

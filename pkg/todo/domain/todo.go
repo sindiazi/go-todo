@@ -1,36 +1,26 @@
 package domain
 
-import "math/rand"
-
-type Printer interface {
-	Print(todos []Todo)
-}
-
-type DefaultPrinter struct {
-}
-
-func (p *DefaultPrinter) Print(todos []Todo) {
-	for _, todo := range todos {
-		println(todo.ID.id, todo.Title, todo.Completed, todo.Description)
-	}
-	println("Total todos: ", len(todos))
-}
+import (
+	"fmt"
+	"math/rand"
+	"reflect"
+)
 
 type TodoId struct {
-	todoUserId TodoUserId
-	id         int
+	TodoUserId TodoUserId
+	Id         int
 }
 
-func NewTodoId() TodoId {
-	return TodoId{id: rand.Int() % 1000}
+func NewTodoId(userId TodoUserId) TodoId {
+	return TodoId{TodoUserId: userId, Id: rand.Int() % 1000}
 }
 
 type TodoUserId struct {
-	id string
+	userId string
 }
 
 func NewTodoUserId(userId string) TodoUserId {
-	return TodoUserId{id: userId}
+	return TodoUserId{userId: userId}
 }
 
 type Todo struct {
@@ -52,7 +42,7 @@ func NewTodoList(todoUserId TodoUserId) *TodoList {
 func NewPopulatedTodoList(todoUserId TodoUserId, todos []Todo) *TodoList {
 	todoMap := make(map[TodoId]Todo)
 	for _, todo := range todos {
-		todoMap[NewTodoId()] = todo
+		todoMap[NewTodoId(todoUserId)] = todo
 	}
 	return &TodoList{
 		TodoUserId: todoUserId,
@@ -64,13 +54,21 @@ func (t *TodoList) Count() int {
 	return len(t.Todos)
 }
 
-func (t *TodoList) Add(todo Todo) {
-	todoId := NewTodoId()
-	t.Todos[todoId] = todo
+func (t *TodoList) Add(todo Todo) Todo {
+	t.Todos[todo.ID] = todo
+	return todo
 }
 
-func (t *TodoList) Remove(todoId TodoId) {
-	delete(t.Todos, todoId)
+func (t *TodoList) Remove(todoId TodoId) bool {
+	_, todo := t.Todos[todoId]
+	ok := reflect.ValueOf(todo).IsZero()
+
+	if !ok {
+		fmt.Println("Todo not found")
+	} else {
+		delete(t.Todos, todoId)
+	}
+	return ok
 }
 
 func (t *TodoList) Update(updatedTodo Todo) Todo {
@@ -81,10 +79,18 @@ func (t *TodoList) GetTodoById(todoId TodoId) Todo {
 	return t.Todos[todoId]
 }
 
-func (t *TodoList) PrintTodos(printer Printer) {
-	var todos []Todo
-	for _, todo := range t.Todos {
-		todos = append(todos, todo)
+func (t *TodoList) GetAllTodos() []Todo {
+	values := make([]Todo, 0, len(t.Todos))
+	for _, value := range t.Todos {
+		values = append(values, value)
 	}
-	printer.Print(todos)
+	return values
 }
+
+//func (t *TodoList) PrintTodos(printer output.Printer) {
+//	var todos []Todo
+//	for _, todo := range t.Todos {
+//		todos = append(todos, todo)
+//	}
+//	printer.Print(todos)
+//}
