@@ -19,7 +19,19 @@ func TestInMemoryTodoRepository_Delete(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "",
+			fields: fields{
+				todoListsByUserIdMap: nil,
+			},
+			args: args{
+				todoId: domain.TodoId{
+					TodoUserId: domain.NewTodoUserId(""),
+					Id:         0,
+				},
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

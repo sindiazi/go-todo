@@ -11,7 +11,7 @@ type DefaultPrinter struct {
 
 func (p *DefaultPrinter) Print(todos []domain.Todo) {
 	for _, todo := range todos {
-		println(todo.Title, todo.Completed, todo.Description)
+		println(todo.Title, todo.IsCompleted, todo.Description)
 	}
 	println("Total todos: ", len(todos))
 }

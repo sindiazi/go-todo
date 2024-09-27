@@ -16,17 +16,17 @@ func NewTodoId(userId TodoUserId) TodoId {
 }
 
 type TodoUserId struct {
-	userId string
+	UserId string
 }
 
 func NewTodoUserId(userId string) TodoUserId {
-	return TodoUserId{userId: userId}
+	return TodoUserId{UserId: userId}
 }
 
 type Todo struct {
 	ID          TodoId
 	Title       string
-	Completed   bool
+	IsCompleted bool
 	Description string
 }
 

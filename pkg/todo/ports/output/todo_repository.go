@@ -1,10 +1,12 @@
 package output
 
-import "todos.com/m/v2/pkg/todo/domain"
+import (
+	"todos.com/m/v2/pkg/todo/shared"
+)
 
 type TodoListRepository interface {
-	SaveOrUpdate(todo domain.Todo) domain.Todo
-	GetAllTodos(userId domain.TodoUserId) []domain.Todo
-	GetByID(todoId domain.TodoId) domain.Todo
-	Delete(todoId domain.TodoId) domain.Todo
+	SaveOrUpdate(todo shared.TodoDto) shared.TodoDto
+	GetAllTodos(userId string) []shared.TodoDto
+	GetByID(todoId shared.TodoIdDto) shared.TodoDto
+	Delete(todoId shared.TodoIdDto) shared.TodoDto
 }

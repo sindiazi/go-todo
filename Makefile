@@ -1,7 +1,7 @@
 # Makefile for Go project
 
 # Variables
-GO_CMD=go
+GO_CMD := go
 MOCKERY_CMD=mockery
 PKG=./...
 BUILD_PKG=./...
