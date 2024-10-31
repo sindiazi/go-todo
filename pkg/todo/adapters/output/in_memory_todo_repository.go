@@ -15,10 +15,41 @@ func NewInMemoryTodoRepository() *InMemoryTodoRepository {
 	todoListsByUserIdMap := make(map[string]shared.TodoListDto)
 	todoListsByUserIdMap["sindiazi"] = shared.TodoListDto{
 		Todos: []shared.TodoDto{
-			shared.TodoDto{
+			{
 				TodoId: shared.TodoIdDto{
 					ID:         1,
 					TodoUserId: "sindiazi",
+				},
+				Title:       "First Todo",
+				Description: "This is the first todo",
+				IsCompleted: false,
+			},
+			{
+				TodoId: shared.TodoIdDto{
+					ID:         2,
+					TodoUserId: "sindiazi",
+				},
+				Title:       "First Todo",
+				Description: "This is the first todo",
+				IsCompleted: false,
+			},
+			{
+				TodoId: shared.TodoIdDto{
+					ID:         3,
+					TodoUserId: "sindiazi",
+				},
+				Title:       "First Todo",
+				Description: "This is the first todo",
+				IsCompleted: false,
+			},
+		},
+	}
+	todoListsByUserIdMap["stranger"] = shared.TodoListDto{
+		Todos: []shared.TodoDto{
+			{
+				TodoId: shared.TodoIdDto{
+					ID:         1,
+					TodoUserId: "stranger",
 				},
 				Title:       "First Todo",
 				Description: "This is the first todo",
@@ -50,7 +81,7 @@ func (tl InMemoryTodoRepository) GetByID(todoIdToFind shared.TodoIdDto) (shared.
 			return todoId, nil
 		}
 	}
-	return shared.TodoDto{}, fmt.Errorf("todo with id %d not found", todoIdToFind.ID)
+	return shared.TodoDto{}, fmt.Errorf("todo with id %s:%d not found", todoIdToFind.TodoUserId, todoIdToFind.ID)
 }
 func (tl InMemoryTodoRepository) Delete(todoId shared.TodoIdDto) bool {
 	todoList := tl.todoListsByUserIdMap[todoId.TodoUserId]

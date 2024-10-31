@@ -10,5 +10,5 @@ type TodoAdminPort interface {
 	RemoveTodo(todoId domain.TodoId) bool
 	UpdateTodo(updatedTodo shared.TodoDto) shared.TodoDto
 	ListTodos(todoUserId string) []shared.TodoDto
-	FindTodoById(todoId shared.TodoIdDto) shared.TodoDto
+	FindTodoById(todoId shared.TodoIdDto) (shared.TodoDto, error)
 }

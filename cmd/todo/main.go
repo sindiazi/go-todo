@@ -20,6 +20,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Get("/{username}", todoWebAdminAdapter.ListTodoHandler())
+	r.Get("/{username}/{id}", todoWebAdminAdapter.FindTodoByIdHandler())
 
 	err := http.ListenAndServe(":3000", r)
 	if err != nil {
