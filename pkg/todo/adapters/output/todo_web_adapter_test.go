@@ -98,7 +98,7 @@ func TestTodoWebAdminAdapter_FindTodoById(t *testing.T) {
 
 	mockUseCases.On("FindById", todo.TodoId).Return(todo)
 
-	result := adapter.FindTodoById(todo.TodoId)
+	result, _ := adapter.FindTodoById(todo.TodoId)
 
 	assert.Equal(t, todo, result)
 	mockUseCases.AssertExpectations(t)
