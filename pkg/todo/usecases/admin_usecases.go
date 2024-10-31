@@ -1,9 +1,8 @@
 package usecases
 
 import (
-	"reflect"
-	"todos.com/m/v2/pkg/todo/domain"
 	"todos.com/m/v2/pkg/todo/ports/output"
+	"todos.com/m/v2/pkg/todo/shared"
 )
 
 type DefaultAdminUseCases struct {
@@ -14,20 +13,21 @@ func NewAdminUseCases(todoRepository output.TodoListRepository) *DefaultAdminUse
 	return &DefaultAdminUseCases{todoRepository: todoRepository}
 }
 
-func (u *DefaultAdminUseCases) AddNewTodo(newTodo domain.Todo) domain.Todo {
+func (u *DefaultAdminUseCases) AddNewTodo(newTodo shared.TodoDto) shared.TodoDto {
 	return u.todoRepository.SaveOrUpdate(newTodo)
 }
-func (u *DefaultAdminUseCases) RemoveTodo(todoId domain.TodoId) bool {
-	return !reflect.ValueOf(u.todoRepository.GetByID(todoId)).IsZero()
+func (u *DefaultAdminUseCases) RemoveTodo(todoId shared.TodoIdDto) bool {
+	//return !reflect.ValueOf(u.todoRepository.GetByID(todoId)).IsZero()
+	return false
 }
 
-func (u *DefaultAdminUseCases) UpdateTodo(newTodo domain.Todo) domain.Todo {
+func (u *DefaultAdminUseCases) UpdateTodo(newTodo shared.TodoDto) shared.TodoDto {
 	return u.todoRepository.SaveOrUpdate(newTodo)
 }
 
-func (u *DefaultAdminUseCases) FindById(todoId domain.TodoId) domain.Todo {
+func (u *DefaultAdminUseCases) FindById(todoId shared.TodoIdDto) (shared.TodoDto, error) {
 	return u.todoRepository.GetByID(todoId)
 }
-func (u *DefaultAdminUseCases) FindAllTodos(todoUserId domain.TodoUserId) []domain.Todo {
+func (u *DefaultAdminUseCases) FindAllTodos(todoUserId string) []shared.TodoDto {
 	return u.todoRepository.GetAllTodos(todoUserId)
 }

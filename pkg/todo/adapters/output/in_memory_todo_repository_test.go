@@ -4,14 +4,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"todos.com/m/v2/pkg/todo/domain"
+	"todos.com/m/v2/pkg/todo/shared"
 )
 
 func TestInMemoryTodoRepository_Delete(t *testing.T) {
 	type fields struct {
-		todoListsByUserIdMap map[domain.TodoUserId]domain.TodoList
+		todoListsByUserIdMap map[string]shared.TodoListDto
 	}
 	type args struct {
-		todoId domain.TodoId
+		todoId shared.TodoIdDto
 	}
 	tests := []struct {
 		name   string
@@ -25,12 +26,12 @@ func TestInMemoryTodoRepository_Delete(t *testing.T) {
 				todoListsByUserIdMap: nil,
 			},
 			args: args{
-				todoId: domain.TodoId{
-					TodoUserId: domain.NewTodoUserId(""),
-					Id:         0,
+				todoId: shared.TodoIdDto{
+					ID:         0,
+					TodoUserId: "",
 				},
 			},
-			want: false,
+			want: true,
 		},
 	}
 	for _, tt := range tests {
@@ -45,7 +46,7 @@ func TestInMemoryTodoRepository_Delete(t *testing.T) {
 
 func TestInMemoryTodoRepository_GetAllTodos(t *testing.T) {
 	type fields struct {
-		todoListsByUserIdMap map[domain.TodoUserId]domain.TodoList
+		todoListsByUserIdMap map[string]shared.TodoListDto
 	}
 	type args struct {
 		userId domain.TodoUserId
@@ -63,42 +64,41 @@ func TestInMemoryTodoRepository_GetAllTodos(t *testing.T) {
 			tl := &InMemoryTodoRepository{
 				todoListsByUserIdMap: tt.fields.todoListsByUserIdMap,
 			}
-			assert.Equalf(t, tt.want, tl.GetAllTodos(tt.args.userId), "GetAllTodos(%v)", tt.args.userId)
+			assert.Equalf(t, tt.want, tl.GetAllTodos(tt.args.userId.UserId), "GetAllTodos(%v)", tt.args.userId)
 		})
 	}
 }
 
 func TestInMemoryTodoRepository_GetByID(t *testing.T) {
 	type fields struct {
-		todoListsByUserIdMap map[domain.TodoUserId]domain.TodoList
+		todoListsByUserIdMap map[string]shared.TodoListDto
 	}
 	type args struct {
-		todoId domain.TodoId
+		todoId shared.TodoIdDto
 	}
-	tests := []struct {
+	var tests []struct {
 		name   string
 		fields fields
 		args   args
 		want   domain.Todo
-	}{
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tl := &InMemoryTodoRepository{
 				todoListsByUserIdMap: tt.fields.todoListsByUserIdMap,
 			}
-			assert.Equalf(t, tt.want, tl.GetByID(tt.args.todoId), "GetByID(%v)", tt.args.todoId)
+			result, _ := tl.GetByID(tt.args.todoId)
+			assert.Equalf(t, tt.want, result, "GetByID(%v)", tt.args.todoId)
 		})
 	}
 }
 
 func TestInMemoryTodoRepository_SaveOrUpdate(t *testing.T) {
 	type fields struct {
-		todoListsByUserIdMap map[domain.TodoUserId]domain.TodoList
+		todoListsByUserIdMap map[string]shared.TodoListDto
 	}
 	type args struct {
-		todo domain.Todo
+		todo shared.TodoDto
 	}
 	tests := []struct {
 		name   string

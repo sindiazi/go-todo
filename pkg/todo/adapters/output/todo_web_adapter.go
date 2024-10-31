@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"todos.com/m/v2/pkg/todo/domain"
+	"strings"
+	"todos.com/m/v2/pkg/todo/shared"
 	"todos.com/m/v2/pkg/todo/usecases"
 )
 
@@ -16,29 +17,27 @@ func NewTodoWebAdminAdapter(adminUseCases usecases.AdminUseCases) *TodoWebAdminA
 	return &TodoWebAdminAdapter{adminUseCases: adminUseCases}
 }
 
-func (twa *TodoWebAdminAdapter) AddTodo(todo domain.Todo) domain.Todo {
+func (twa *TodoWebAdminAdapter) AddTodo(todo shared.TodoDto) shared.TodoDto {
 	return twa.adminUseCases.AddNewTodo(todo)
 }
-func (twa *TodoWebAdminAdapter) RemoveTodo(todoId domain.TodoId) bool {
+func (twa *TodoWebAdminAdapter) RemoveTodo(todoId shared.TodoIdDto) bool {
 	return twa.adminUseCases.RemoveTodo(todoId)
 }
-func (twa *TodoWebAdminAdapter) UpdateTodo(updatedTodo domain.Todo) domain.Todo {
+func (twa *TodoWebAdminAdapter) UpdateTodo(updatedTodo shared.TodoDto) shared.TodoDto {
 	return twa.adminUseCases.UpdateTodo(updatedTodo)
 }
-func (twa *TodoWebAdminAdapter) ListTodos(todoUserId domain.TodoUserId) []domain.Todo {
+func (twa *TodoWebAdminAdapter) ListTodos(todoUserId string) []shared.TodoDto {
 	return twa.adminUseCases.FindAllTodos(todoUserId)
 }
-func (twa *TodoWebAdminAdapter) FindTodoById(todoId domain.TodoId) domain.Todo {
-	return twa.adminUseCases.FindById(todoId)
+func (twa *TodoWebAdminAdapter) FindTodoById(todoId shared.TodoIdDto) shared.TodoDto {
+	result, _ := twa.adminUseCases.FindById(todoId)
+	return result
 }
 
-func HandleAddTodo() func(w http.ResponseWriter, r *http.Request) {
+func (twa *TodoWebAdminAdapter) ListTodoHandler() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//todoList := domain.NewTodoList(domain.NewTodoUserId("This is a test"))
-		result, _ := json.Marshal(struct {
-			test string
-		}{test: "This is a test"})
-		println("This is the printed line...")
+		username := getPathIndex(r, 1)
+		result, _ := json.Marshal(twa.ListTodos(username))
 		println(result)
 		w.Header().Set("Content-Type", "application/json")
 		_, err := w.Write([]byte(result))
@@ -46,4 +45,9 @@ func HandleAddTodo() func(w http.ResponseWriter, r *http.Request) {
 			log.Fatal("could not process the request", err)
 		}
 	}
+}
+
+func getPathIndex(r *http.Request, index int) string {
+	path := r.URL.Path
+	return strings.Split(path, "/")[index]
 }

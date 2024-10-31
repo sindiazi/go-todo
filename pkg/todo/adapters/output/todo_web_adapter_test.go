@@ -4,42 +4,42 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"testing"
-	"todos.com/m/v2/pkg/todo/domain"
+	"todos.com/m/v2/pkg/todo/shared"
 )
 
 type MockAdminUseCases struct {
 	mock.Mock
 }
 
-func (m *MockAdminUseCases) AddNewTodo(todo domain.Todo) domain.Todo {
+func (m *MockAdminUseCases) AddNewTodo(todo shared.TodoDto) shared.TodoDto {
 	args := m.Called(todo)
-	return args.Get(0).(domain.Todo)
+	return args.Get(0).(shared.TodoDto)
 }
 
-func (m *MockAdminUseCases) RemoveTodo(todoId domain.TodoId) bool {
+func (m *MockAdminUseCases) RemoveTodo(todoId shared.TodoIdDto) bool {
 	args := m.Called(todoId)
 	return args.Bool(0)
 }
 
-func (m *MockAdminUseCases) UpdateTodo(updatedTodo domain.Todo) domain.Todo {
+func (m *MockAdminUseCases) UpdateTodo(updatedTodo shared.TodoDto) shared.TodoDto {
 	args := m.Called(updatedTodo)
-	return args.Get(0).(domain.Todo)
+	return args.Get(0).(shared.TodoDto)
 }
 
-func (m *MockAdminUseCases) FindAllTodos(todoUserId domain.TodoUserId) []domain.Todo {
+func (m *MockAdminUseCases) FindAllTodos(todoUserId string) []shared.TodoDto {
 	args := m.Called(todoUserId)
-	return args.Get(0).([]domain.Todo)
+	return args.Get(0).([]shared.TodoDto)
 }
 
-func (m *MockAdminUseCases) FindById(todoId domain.TodoId) domain.Todo {
+func (m *MockAdminUseCases) FindById(todoId shared.TodoIdDto) (shared.TodoDto, error) {
 	args := m.Called(todoId)
-	return args.Get(0).(domain.Todo)
+	return args.Get(0).(shared.TodoDto), nil
 }
 
 func TestTodoWebAdminAdapter_AddTodo(t *testing.T) {
 	mockUseCases := new(MockAdminUseCases)
 	adapter := TodoWebAdminAdapter{adminUseCases: mockUseCases}
-	todo := domain.Todo{ID: domain.NewTodoId(domain.NewTodoUserId("sindiazi")), Title: "Test Todo"}
+	todo := shared.NewTodoDto("sindiazi", 0, "Test Todo", "Test Description", false)
 
 	mockUseCases.On("AddNewTodo", todo).Return(todo)
 
@@ -52,7 +52,7 @@ func TestTodoWebAdminAdapter_AddTodo(t *testing.T) {
 func TestTodoWebAdminAdapter_RemoveTodo(t *testing.T) {
 	mockUseCases := new(MockAdminUseCases)
 	adapter := TodoWebAdminAdapter{adminUseCases: mockUseCases}
-	todoId := domain.NewTodoId(domain.NewTodoUserId("sindiazi"))
+	todoId := shared.TodoIdDto{ID: 0, TodoUserId: "sindiazi"}
 
 	mockUseCases.On("RemoveTodo", todoId).Return(true)
 
@@ -65,7 +65,7 @@ func TestTodoWebAdminAdapter_RemoveTodo(t *testing.T) {
 func TestTodoWebAdminAdapter_UpdateTodo(t *testing.T) {
 	mockUseCases := new(MockAdminUseCases)
 	adapter := TodoWebAdminAdapter{adminUseCases: mockUseCases}
-	updatedTodo := domain.Todo{ID: domain.NewTodoId(domain.NewTodoUserId("sindiazi")), Title: "Updated Todo"}
+	updatedTodo := shared.NewTodoDto("sindiazi", 0, "Updated Test Todo", "Test Description", false)
 
 	mockUseCases.On("UpdateTodo", updatedTodo).Return(updatedTodo)
 
@@ -78,14 +78,14 @@ func TestTodoWebAdminAdapter_UpdateTodo(t *testing.T) {
 func TestTodoWebAdminAdapter_ListTodos(t *testing.T) {
 	mockUseCases := new(MockAdminUseCases)
 	adapter := TodoWebAdminAdapter{adminUseCases: mockUseCases}
-	todoUserId := domain.NewTodoUserId("sindiazi")
-	todos := []domain.Todo{
-		domain.Todo{ID: domain.NewTodoId(domain.NewTodoUserId("sindiazi")), Title: "Updated Todo"},
+	updatedTodo := shared.NewTodoDto("sindiazi", 0, "Updated Test Todo", "Test Description", false)
+	todos := []shared.TodoDto{
+		updatedTodo,
 	}
 
-	mockUseCases.On("FindAllTodos", todoUserId).Return(todos)
+	mockUseCases.On("FindAllTodos", updatedTodo.TodoId.TodoUserId).Return(todos)
 
-	result := adapter.ListTodos(todoUserId)
+	result := adapter.ListTodos(updatedTodo.TodoId.TodoUserId)
 
 	assert.Equal(t, todos, result)
 	mockUseCases.AssertExpectations(t)
@@ -94,12 +94,11 @@ func TestTodoWebAdminAdapter_ListTodos(t *testing.T) {
 func TestTodoWebAdminAdapter_FindTodoById(t *testing.T) {
 	mockUseCases := new(MockAdminUseCases)
 	adapter := TodoWebAdminAdapter{adminUseCases: mockUseCases}
-	todoId := domain.NewTodoId(domain.NewTodoUserId("sindiazi"))
-	todo := domain.Todo{ID: todoId, Title: "Found Todo"}
+	todo := shared.NewTodoDto("sindiazi", 0, "Updated Test Todo", "Test Description", false)
 
-	mockUseCases.On("FindById", todoId).Return(todo)
+	mockUseCases.On("FindById", todo.TodoId).Return(todo)
 
-	result := adapter.FindTodoById(todoId)
+	result := adapter.FindTodoById(todo.TodoId)
 
 	assert.Equal(t, todo, result)
 	mockUseCases.AssertExpectations(t)

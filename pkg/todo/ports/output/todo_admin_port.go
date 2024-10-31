@@ -1,11 +1,14 @@
 package output
 
-import "todos.com/m/v2/pkg/todo/domain"
+import (
+	"todos.com/m/v2/pkg/todo/domain"
+	"todos.com/m/v2/pkg/todo/shared"
+)
 
 type TodoAdminPort interface {
-	AddTodo(todo domain.Todo) domain.Todo
+	AddTodo(todo shared.TodoDto) shared.TodoDto
 	RemoveTodo(todoId domain.TodoId) bool
-	UpdateTodo(updatedTodo domain.Todo) domain.Todo
-	ListTodos(todoUserId domain.TodoUserId) []domain.Todo
-	FindTodoById(todoId domain.TodoId) domain.Todo
+	UpdateTodo(updatedTodo shared.TodoDto) shared.TodoDto
+	ListTodos(todoUserId string) []shared.TodoDto
+	FindTodoById(todoId shared.TodoIdDto) shared.TodoDto
 }

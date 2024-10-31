@@ -23,9 +23,9 @@ type TodoDto struct {
 	IsCompleted bool      `json:"isCompleted"`
 }
 
-func (*TodoDto) NewTodoDto(userId string, todoId int, title string, description string, isCompleted bool) TodoDto {
+func NewTodoDto(userId string, todoId int, title string, description string, isCompleted bool) TodoDto {
 	return TodoDto{
-		TodoUserId: TodoIdDto{
+		TodoId: TodoIdDto{
 			ID:         todoId,
 			TodoUserId: userId,
 		},
@@ -37,13 +37,18 @@ func (*TodoDto) NewTodoDto(userId string, todoId int, title string, description 
 
 func (todoDto *TodoDto) FromTodo(todo domain.Todo) TodoDto {
 	todoIdDto := TodoIdDto{}
-
 	return TodoDto{
-		TodoUserId:  todoIdDto.FromTodoId(todo.ID),
+		TodoId:      todoIdDto.FromTodoId(todo.ID),
 		Title:       todo.Title,
 		Description: todo.Description,
 		IsCompleted: todo.IsCompleted,
 	}
+}
+
+func (todoDto *TodoDto) ToTodo() domain.Todo {
+	todoId := domain.NewExistingTodoId(domain.NewTodoUserId(todoDto.TodoId.TodoUserId), todoDto.TodoId.ID)
+	return domain.NewTodo(todoId, todoDto.Title, todoDto.Description, todoDto.IsCompleted)
+
 }
 
 type TodoListDto struct {
@@ -51,12 +56,11 @@ type TodoListDto struct {
 	TodoUserId string    `json:"todoUserId"`
 }
 
-func (*TodoListDto) FromTodoList(todoList domain.TodoList) TodoListDto {
+func (todoListDto *TodoListDto) FromTodoList(todoList domain.TodoList) TodoListDto {
 
-	todos := []TodoDto{}
-
+	var todos []TodoDto
 	for _, todo := range todoList.Todos {
-		todoDto := TodoDto{}
+		var todoDto = TodoDto{}
 		todos = append(todos, todoDto.FromTodo(todo))
 	}
 
@@ -64,4 +68,13 @@ func (*TodoListDto) FromTodoList(todoList domain.TodoList) TodoListDto {
 		TodoUserId: todoList.TodoUserId.UserId,
 		Todos:      todos,
 	}
+}
+
+func (*TodoListDto) TodoTodoList(todoList TodoListDto) domain.TodoList {
+	todoUserId := domain.NewTodoUserId(todoList.TodoUserId)
+	var todos []domain.Todo
+	for _, todo := range todoList.Todos {
+		todos = append(todos, todo.ToTodo())
+	}
+	return domain.NewPopulatedTodoList(todoUserId, todos)
 }

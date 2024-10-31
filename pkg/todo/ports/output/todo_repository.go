@@ -7,6 +7,6 @@ import (
 type TodoListRepository interface {
 	SaveOrUpdate(todo shared.TodoDto) shared.TodoDto
 	GetAllTodos(userId string) []shared.TodoDto
-	GetByID(todoId shared.TodoIdDto) shared.TodoDto
-	Delete(todoId shared.TodoIdDto) shared.TodoDto
+	GetByID(todoId shared.TodoIdDto) (shared.TodoDto, error)
+	Delete(todoId shared.TodoIdDto) bool
 }

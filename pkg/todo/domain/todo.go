@@ -12,7 +12,11 @@ type TodoId struct {
 }
 
 func NewTodoId(userId TodoUserId) TodoId {
-	return TodoId{TodoUserId: userId, Id: rand.Int() % 1000}
+	return NewExistingTodoId(userId, rand.Int()%1000)
+}
+
+func NewExistingTodoId(userId TodoUserId, todoId int) TodoId {
+	return TodoId{TodoUserId: userId, Id: todoId}
 }
 
 type TodoUserId struct {
@@ -30,21 +34,30 @@ type Todo struct {
 	Description string
 }
 
+func NewTodo(todoId TodoId, title string, description string, isCompleted bool) Todo {
+	return Todo{
+		ID:          todoId,
+		Title:       title,
+		IsCompleted: isCompleted,
+		Description: description,
+	}
+}
+
 type TodoList struct {
 	TodoUserId TodoUserId
 	Todos      map[TodoId]Todo
 }
 
-func NewTodoList(todoUserId TodoUserId) *TodoList {
+func NewTodoList(todoUserId TodoUserId) TodoList {
 	return NewPopulatedTodoList(todoUserId, []Todo{})
 }
 
-func NewPopulatedTodoList(todoUserId TodoUserId, todos []Todo) *TodoList {
+func NewPopulatedTodoList(todoUserId TodoUserId, todos []Todo) TodoList {
 	todoMap := make(map[TodoId]Todo)
 	for _, todo := range todos {
 		todoMap[NewTodoId(todoUserId)] = todo
 	}
-	return &TodoList{
+	return TodoList{
 		TodoUserId: todoUserId,
 		Todos:      todoMap,
 	}
